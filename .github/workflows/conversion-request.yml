@@ -1,10 +1,38 @@
 name: Conversion Request
+
 on:
-  workflow_dispatch:   # 👈 lets you run it manually
-  issues:
-    types:
-      - labeled
+  workflow_dispatch:          # allows manual trigger
+    inputs:
+      pack_url:
+        description: 'Direct Download URL for Java Pack (.zip)'
+        required: true
+        type: string
+
 jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download Java Pack
+        run: |
+          echo "Downloading Java Pack from: ${{ github.event.inputs.pack_url }}"
+          curl -L "${{ github.event.inputs.pack_url }}" -o java_pack.zip
+          unzip -o java_pack.zip -d java_pack
+
+      # 🔧 Replace this with your actual conversion logic
+      - name: Run conversion
+        run: |
+          echo "Running conversion..."
+          # ./converter.sh java_pack.zip
+
+      - name: Upload converted pack
+        uses: actions/upload-artifact@v3
+        with:
+          name: converted-pack
+          path: ./converted-output/**/*
+
   get-pack-info:
     runs-on: ubuntu-latest
     if: github.event.label.name == 'conversion'
