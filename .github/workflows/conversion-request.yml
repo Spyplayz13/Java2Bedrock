@@ -1,9 +1,9 @@
 name: Conversion Request
 on:
+  workflow_dispatch:   # 👈 lets you run it manually
   issues:
     types:
       - labeled
-
 jobs:
   get-pack-info:
     runs-on: ubuntu-latest
